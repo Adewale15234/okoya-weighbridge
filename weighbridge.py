@@ -29,11 +29,12 @@ def dashboard():
     total_net = sum(r.net for r in records) if records else 0
     avg_net = (total_net / total_records) if total_records else 0
 
-    today = datetime.now().strftime("%Y-%m-%d")
+    today = datetime.now().date()
 
+    # ✅ FIXED (works with real datetime now)
     today_records = [
         r for r in records
-        if r.date_time and r.date_time.startswith(today)
+        if r.date_time and r.date_time.date() == today
     ]
 
     today_net = sum(r.net for r in today_records) if today_records else 0
@@ -67,7 +68,7 @@ def form():
             gross=gross,
             tare=tare,
             net=net,
-            date_time=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            date_time=datetime.now()   # ✅ FIXED HERE (VERY IMPORTANT)
         )
 
         db.session.add(new_record)
@@ -131,7 +132,6 @@ def export_excel():
 
     df = pd.DataFrame(data)
 
-    # SAFE FOR RENDER (NO FILE OVERWRITE ISSUES)
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
     df.to_excel(tmp.name, index=False)
 
