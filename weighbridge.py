@@ -60,8 +60,12 @@ def dashboard():
 def form():
 
     if request.method == "POST":
-        gross = float(request.form["gross"])
-        tare = float(request.form["tare"])
+       try:
+            gross = float(request.form.get("gross", 0))
+            tare = float(request.form.get("tare", 0))
+        except:
+            gross = 0
+            tare = 0
         net = gross - tare
 
         new_record = Record(
@@ -78,7 +82,7 @@ def form():
         db.session.add(new_record)
         db.session.commit()
 
-        return redirect(url_for("weighbridge.slip", record_id=new_record.id))
+        return redirect(url_for("weighbridge_bp.slip", record_id=new_record.id))
 
     return render_template("form.html")
 
