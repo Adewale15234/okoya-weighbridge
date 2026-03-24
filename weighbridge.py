@@ -5,7 +5,7 @@ import pandas as pd
 import tempfile
 from functools import wraps
 
-weighbridge_bp = Blueprint("weighbridge", __name__)
+weighbridge_bp = Blueprint("weighbridge_bp", __name__)
 
 # ================= LOGIN GUARD =================
 def login_required(func):
@@ -112,7 +112,7 @@ def delete_record(record_id):
 
 
 # ================= EDIT =================
-@weighbridge.route('/edit/<int:record_id>', methods=['GET', 'POST'])
+@weighbridge_bp.route('/edit/<int:record_id>', methods=['GET', 'POST'])
 def edit_record(record_id):
     record = Record.query.get_or_404(record_id)
 
