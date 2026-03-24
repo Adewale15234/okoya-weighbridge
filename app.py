@@ -15,7 +15,7 @@ from auth import auth_bp
 from weighbridge import weighbridge_bp
 
 app.register_blueprint(auth_bp)
-app.register_blueprint(weighbridge_bp)
+app.register_blueprint(weighbridge_bp, url_prefix="/weighbridge")
 
 # CREATE DB SAFELY
 with app.app_context():
