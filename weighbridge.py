@@ -111,6 +111,30 @@ def delete_record(record_id):
     return redirect(url_for("weighbridge.records"))
 
 
+# ================= EDIT =================
+@weighbridge.route('/edit/<int:record_id>', methods=['GET', 'POST'])
+def edit_record(record_id):
+    record = Record.query.get_or_404(record_id)
+
+    if request.method == 'POST':
+        record.vehicle = request.form['vehicle']
+        record.material = request.form['material']
+        record.supplier = request.form['supplier']
+        record.driver = request.form['driver']
+
+        record.gross = float(request.form['gross'] or 0)
+        record.tare = float(request.form['tare'] or 0)
+        record.net = float(request.form['net'] or 0)
+
+        record.date_time = request.form['date_time']
+
+        db.session.commit()
+        flash('Record updated successfully!', 'success')
+        return redirect(url_for('weighbridge.records'))
+
+    return render_template('edit_record.html', record=record)
+
+
 # ================= EXCEL EXPORT =================
 @weighbridge_bp.route("/export_excel")
 @login_required
