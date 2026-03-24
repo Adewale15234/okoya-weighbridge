@@ -17,7 +17,7 @@ def login_required(func):
     return wrapper
 
 
-# ================= DASHBOARD =================
+# ================= DASHBOARD (FIXED SAFE VERSION) =================
 @weighbridge_bp.route("/dashboard")
 @login_required
 def dashboard():
@@ -25,19 +25,23 @@ def dashboard():
     records = Record.query.all()
 
     total_records = len(records)
-    total_gross = sum(r.gross for r in records) if records else 0
-    total_net = sum(r.net for r in records) if records else 0
+    total_gross = sum(r.gross or 0 for r in records)
+    total_net = sum(r.net or 0 for r in records)
     avg_net = (total_net / total_records) if total_records else 0
 
     today = datetime.now().date()
 
-    # ✅ FIXED (works with real datetime now)
-    today_records = [
-        r for r in records
-        if r.date_time and r.date_time.date() == today
-    ]
+    # SAFE DATE HANDLING (prevents Render crash)
+    today_records = []
+    for r in records:
+        try:
+            if r.date_time and isinstance(r.date_time, datetime):
+                if r.date_time.date() == today:
+                    today_records.append(r)
+        except:
+            pass
 
-    today_net = sum(r.net for r in today_records) if today_records else 0
+    today_net = sum(r.net or 0 for r in today_records)
 
     return render_template(
         "dashboard.html",
@@ -68,7 +72,7 @@ def form():
             gross=gross,
             tare=tare,
             net=net,
-            date_time=datetime.now()   # ✅ FIXED HERE (VERY IMPORTANT)
+            date_time=datetime.now()
         )
 
         db.session.add(new_record)
@@ -115,6 +119,7 @@ def delete_record(record_id):
 @weighbridge_bp.route('/edit/<int:record_id>', methods=['GET', 'POST'])
 @login_required
 def edit_record(record_id):
+
     record = Record.query.get_or_404(record_id)
 
     if request.method == 'POST':
@@ -127,7 +132,14 @@ def edit_record(record_id):
         record.tare = float(request.form['tare'] or 0)
         record.net = float(request.form['net'] or 0)
 
-        record.date_time = datetime.strptime(request.form['date_time'], "%Y-%m-%dT%H:%M")
+        # SAFE DATE PARSING (prevents crash on bad input)
+        try:
+            record.date_time = datetime.strptime(
+                request.form['date_time'],
+                "%Y-%m-%dT%H:%M"
+            )
+        except:
+            record.date_time = datetime.now()
 
         db.session.commit()
         flash('Record updated successfully!', 'success')
@@ -152,7 +164,7 @@ def export_excel():
         "Gross": r.gross,
         "Tare": r.tare,
         "Net": r.net,
-        "Date": r.date_time
+        "Date": str(r.date_time)
     } for r in records]
 
     df = pd.DataFrame(data)
