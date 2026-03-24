@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, send_file
+from flask import Blueprint, render_template, request, redirect, url_for, session, send_file, flash
 from datetime import datetime
 from models import db, Record
 import pandas as pd
@@ -113,6 +113,7 @@ def delete_record(record_id):
 
 # ================= EDIT =================
 @weighbridge_bp.route('/edit/<int:record_id>', methods=['GET', 'POST'])
+@login_required
 def edit_record(record_id):
     record = Record.query.get_or_404(record_id)
 
@@ -126,7 +127,7 @@ def edit_record(record_id):
         record.tare = float(request.form['tare'] or 0)
         record.net = float(request.form['net'] or 0)
 
-        record.date_time = request.form['date_time']
+        record.date_time = datetime.strptime(request.form['date_time'], "%Y-%m-%dT%H:%M")
 
         db.session.commit()
         flash('Record updated successfully!', 'success')
