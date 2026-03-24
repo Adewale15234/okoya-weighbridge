@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Records</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        body {
+            font-family: Arial;
+        }
+
+        tr.clickable-row {
+            cursor: pointer;
+        }
+
+        tr.clickable-row:hover {
+            background-color: #f2f2f2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+        }
+
+        .modal-content {
+            background: white;
+            width: 400px;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background: red;
+            color: white;
+        }
+
+        .print-btn {
+            background: green;
+            color: white;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .counter {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .top-bar {
+            margin: 15px 0;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>All Records</h2>
+</div>
+
+<div class="container">
+
+<div class="top-bar">
+    <a href="{{ url_for('weighbridge.dashboard') }}" class="btn">⬅ Dashboard</a>
+    <a href="{{ url_for('weighbridge.export_excel') }}" class="btn print-btn">⬇ Export Excel</a>
+</div>
+
+<input type="text" id="searchInput" class="search-box"
+placeholder="Search by Vehicle, ID, Date...">
+
+<div class="counter">
+    Showing: <span id="count">{{ records|length }}</span> records
+</div>
+
+<table border="1" width="100%" cellspacing="0" cellpadding="8">
+
+<tr>
+    <th>ID</th>
+    <th>Vehicle</th>
+    <th>Gross</th>
+    <th>Tare</th>
+    <th>Net</th>
+    <th>Date</th>
+    <th>Action</th>
+</tr>
+
+{% for r in records %}
+<tr class="clickable-row search-row"
+    onclick="window.location='{{ url_for('weighbridge.slip', record_id=r.id) }}'">
+
+    <td class="id">{{ r.id }}</td>
+    <td class="vehicle">{{ r.vehicle }}</td>
+    <td>{{ r.gross }}</td>
+    <td>{{ r.tare }}</td>
+    <td>{{ r.net }}</td>
+    <td class="date">{{ r.date_time }}</td>
+
+    <td onclick="event.stopPropagation();">
+        <form action="{{ url_for('weighbridge.delete_record', record_id=r.id) }}" method="POST">
+            <button class="btn delete-btn"
+                onclick="return confirm('Delete this record?')">
+                Delete
+            </button>
+        </form>
+    </td>
+
+</tr>
+{% endfor %}
+
+</table>
+
+<br>
+<a href="{{ url_for('weighbridge.form') }}">Back</a>
+
+</div>
+
+<!-- MODAL -->
+<div id="slipModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+
+        <h3>Vehicle Slip</h3>
+
+        <p><b>ID:</b> <span id="m_id"></span></p>
+        <p><b>Vehicle:</b> <span id="m_vehicle"></span></p>
+        <p><b>Gross:</b> <span id="m_gross"></span></p>
+        <p><b>Tare:</b> <span id="m_tare"></span></p>
+        <p><b>Net:</b> <span id="m_net"></span></p>
+        <p><b>Date:</b> <span id="m_date"></span></p>
+
+        <button class="btn print-btn" onclick="window.print()">Print</button>
+    </div>
+</div>
+
+<script>
+function openModal(id, vehicle, gross, tare, net, date_time) {
+    document.getElementById("m_id").innerText = id;
+    document.getElementById("m_vehicle").innerText = vehicle;
+    document.getElementById("m_gross").innerText = gross;
+    document.getElementById("m_tare").innerText = tare;
+    document.getElementById("m_net").innerText = net;
+    document.getElementById("m_date").innerText = date_time;
+
+    document.getElementById("slipModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("slipModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    let modal = document.getElementById("slipModal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+/* SEARCH SYSTEM */
+document.getElementById("searchInput").addEventListener("keyup", function() {
+    let value = this.value.toLowerCase();
+    let rows = document.querySelectorAll(".search-row");
+    let count = 0;
+
+    rows.forEach(row => {
+        let vehicle = row.querySelector(".vehicle").innerText.toLowerCase();
+        let id = row.querySelector(".id").innerText.toLowerCase();
+        let date = row.querySelector(".date").innerText.toLowerCase();
+
+        if (vehicle.includes(value) || id.includes(value) || date.includes(value)) {
+            row.style.display = "";
+            count++;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    document.getElementById("count").innerText = count;
+});
+</script>
+
+</body>
+</html>

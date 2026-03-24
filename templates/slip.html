@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weighing Slip</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+
+/* =========================
+   A4 PAGE SETUP (FIXED PRINT SAFE)
+========================= */
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: auto;
+    padding: 12mm;
+    background: white;
+    box-sizing: border-box;
+}
+
+/* SLIP BOX */
+.slip-container {
+    border: 1.5px solid #000;
+    padding: 15px;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+}
+
+/* HEADER */
+.official-header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.company-logo img {
+    height: 75px;
+}
+
+.company-name {
+    color: #0b5d3b;
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.company-motto {
+    color: goldenrod;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-top: 3px;
+}
+
+.company-address {
+    background: #000;
+    color: #fff;
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin-top: 5px;
+}
+
+/* SLIP TITLE */
+.slip-title {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #0b5d3b;
+    font-size: 1rem;
+}
+
+/* SLIP NUMBER */
+.slip-no {
+    margin-top: 5px;
+    font-weight: bold;
+    color: #000;
+}
+
+/* DATA GRID */
+.data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 25px;
+    margin-top: 15px;
+}
+
+.data-item {
+    border-bottom: 1px solid #000;
+    padding: 6px 0;
+    font-size: 0.95rem;
+}
+
+/* FOOTER */
+.footer-note {
+    margin-top: 18px;
+    font-size: 0.85rem;
+}
+
+/* BUTTONS */
+.no-print {
+    text-align: center;
+    margin: 10px;
+}
+
+.no-print a,
+.no-print button {
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    border: 1px solid #000;
+    cursor: pointer;
+    background: #f5f5f5;
+}
+
+.no-print button:hover,
+.no-print a:hover {
+    background: #0b5d3b;
+    color: white;
+}
+
+/* PRINT RULE (VERY IMPORTANT FIX) */
+@media print {
+
+    .no-print {
+        display: none;
+    }
+
+    body {
+        margin: 0;
+        background: white;
+    }
+
+    .page {
+        box-shadow: none;
+        margin: 0;
+        padding: 10mm;
+    }
+
+    .slip-container {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+<div class="no-print">
+    <a href="{{ url_for('weighbridge.records') }}">⬅ Back to Records</a>
+    <button onclick="window.print()">🖨 Print Slip</button>
+</div>
+
+<div class="page">
+
+    <!-- ================= ORIGINAL COPY ================= -->
+    <div class="slip-container">
+
+        <div class="official-header">
+
+            <div class="company-logo">
+                <img src="{{ url_for('static', filename='android-chrome-512x512.png') }}">
+            </div>
+
+            <div class="company-name">OKOYA FOOD COMPANY LIMITED</div>
+
+            <div class="company-motto">
+                POVERTY ERADICATION • REDUCE INEQUALITY • LEAVE NO ONE BEHIND
+            </div>
+
+            <div class="company-address">
+                KM 7 Idi APA community, Shaki, Oyo State, Nigeria
+            </div>
+
+            <div class="slip-no">Slip No: {{ slip_no }}</div>
+            <div class="slip-title">WEIGHING SLIP (ORIGINAL)</div>
+
+        </div>
+
+        <div class="data-grid">
+            <div class="data-item">Vehicle: {{ record.vehicle }}</div>
+            <div class="data-item">Material: {{ record.material }}</div>
+
+            <div class="data-item">Supplier: {{ record.supplier }}</div>
+            <div class="data-item">Driver: {{ record.driver }}</div>
+
+            <div class="data-item">Gross Weight: {{ record.gross }}</div>
+            <div class="data-item">Tare Weight: {{ record.tare }}</div>
+
+            <div class="data-item">Net Weight: {{ record.net }}</div>
+            <div class="data-item">Date: {{ record.date_time }}</div>
+        </div>
+
+        <div class="footer-note">
+            Signature: ______________________
+        </div>
+
+    </div>
+
+    <!-- ================= DUPLICATE COPY ================= -->
+    <div class="slip-container">
+
+        <div class="official-header">
+
+            <div class="company-logo">
+                <img src="{{ url_for('static', filename='android-chrome-512x512.png') }}">
+            </div>
+
+            <div class="company-name">OKOYA FOOD COMPANY LIMITED</div>
+
+            <div class="company-motto">
+                POVERTY ERADICATION • REDUCE INEQUALITY • LEAVE NO ONE BEHIND
+            </div>
+
+            <div class="company-address">
+                KM 7 Idi APA community, Shaki, Oyo State, Nigeria
+            </div>
+
+            <div class="slip-title">WEIGHING SLIP (DUPLICATE)</div>
+
+        </div>
+
+        <div class="data-grid">
+            <div class="data-item">Vehicle: {{ record.vehicle }}</div>
+            <div class="data-item">Material: {{ record.material }}</div>
+
+            <div class="data-item">Supplier: {{ record.supplier }}</div>
+            <div class="data-item">Driver: {{ record.driver }}</div>
+
+            <div class="data-item">Gross Weight: {{ record.gross }}</div>
+            <div class="data-item">Tare Weight: {{ record.tare }}</div>
+
+            <div class="data-item">Net Weight: {{ record.net }}</div>
+            <div class="data-item">Date: {{ record.date_time }}</div>
+        </div>
+
+        <div class="footer-note">
+            Signature: ______________________
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

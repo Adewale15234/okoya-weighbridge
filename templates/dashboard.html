@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Industrial Weighbridge Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #0b1f14;
+            margin: 0;
+            color: white;
+        }
+
+        .header {
+            background: #064e3b;
+            padding: 25px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            border-bottom: 2px solid #10b981;
+        }
+
+        .header img {
+            height: 60px;
+            margin-bottom: 10px;
+        }
+
+        .live {
+            color: #22c55e;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .card {
+            background: #052e22;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(16,185,129,0.2);
+            border: 1px solid #14532d;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+            border-color: #10b981;
+        }
+
+        .card h2 {
+            font-size: 32px;
+            margin: 0;
+            color: #10b981;
+        }
+
+        .card p {
+            margin-top: 10px;
+            color: #d1fae5;
+            font-size: 14px;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+            padding-bottom: 30px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            margin: 5px;
+            background: #065f46;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            display: inline-block;
+            border: 1px solid #10b981;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #10b981;
+            color: black;
+        }
+
+        .top-note {
+            text-align: center;
+            font-size: 12px;
+            color: #a7f3d0;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <!-- LOGO -->
+    <img src="{{ url_for('static', filename='android-chrome-512x512.png') }}">
+
+    <div>🏭 OKOYA INDUSTRIAL WEIGHBRIDGE SYSTEM</div>
+    <div class="live">● LIVE SYSTEM ACTIVE</div>
+</div>
+
+<div class="top-note">
+    Secure System • Authorized Access Only
+</div>
+
+<div class="grid">
+
+    <div class="card">
+        <h2>{{ total_records }}</h2>
+        <p>Total Records</p>
+    </div>
+
+    <div class="card">
+        <h2>{{ total_gross }}</h2>
+        <p>Total Gross Weight</p>
+    </div>
+
+    <div class="card">
+        <h2>{{ total_net }}</h2>
+        <p>Total Net Weight</p>
+    </div>
+
+    <div class="card">
+        <h2>{{ today_records }}</h2>
+        <p>Vehicles Today</p>
+    </div>
+
+    <div class="card">
+        <h2>{{ today_net }}</h2>
+        <p>Today's Net Weight</p>
+    </div>
+
+    <div class="card">
+        <h2>{{ avg_net|round(2) }}</h2>
+        <p>Average Net Weight</p>
+    </div>
+
+</div>
+
+<div class="buttons">
+    <a class="btn" href="/form">➕ New Entry</a>
+    <a class="btn" href="/records">📄 Records</a>
+    <a class="btn" href="/export_excel">⬇ Export Excel</a>
+    <a class="btn" href="/logout">🚪 Logout</a>
+</div>
+
+</body>
+</html>

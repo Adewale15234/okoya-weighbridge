@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weighing Slip Form</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+<style>
+
+/* A4 LAYOUT */
+.register-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #000;
+    background: #fff;
+}
+
+/* HEADER */
+.official-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.company-logo img {
+    height: 90px;
+}
+
+.official-header {
+    text-align: center;
+    flex: 1;
+}
+
+.company-name {
+    color: #0b5d3b;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.company-motto {
+    color: goldenrod;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.company-address {
+    background: black;
+    color: white;
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 5px;
+    margin-top: 5px;
+    font-size: 0.8rem;
+}
+
+.form-title {
+    color: goldenrod;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.form-note {
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+/* FORM GRID */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 40px;
+}
+
+.form-grid label {
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.form-grid input {
+    border: none;
+    border-bottom: 2px solid #0b5d3b;
+    background: #f9f9f9;
+    color: #000;
+    padding: 6px;
+    font-weight: 500;
+}
+
+/* BUTTON AREA */
+.form-submit {
+    text-align: center;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    background: #0b5d3b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #10b981;
+    color: black;
+}
+
+/* PRINT */
+@media print {
+    .no-print {
+        display: none;
+    }
+    .register-container {
+        border: none;
+        width: 190mm;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="register-container">
+
+    <!-- HEADER -->
+    <div class="official-header-row">
+        
+        <div class="company-logo">
+            <img src="{{ url_for('static', filename='android-chrome-512x512.png') }}">
+        </div>
+
+        <div class="official-header">
+            <h1 class="company-name">OKOYA FOOD COMPANY LIMITED</h1>
+            <h3 class="company-motto">
+                POVERTY ERADICATION, REDUCE INEQUALITY AND LEAVE NO ONE BEHIND
+            </h3>
+            <p class="company-address">
+                KM 7 Idi APA community, along Ilesha Ibaruba express way, Shaki, Oyo State, Nigeria
+            </p>
+
+            <h3 class="form-title">WEIGHING SLIP FORM</h3>
+            <p class="form-note">(PLEASE FILL CAREFULLY)</p>
+        </div>
+
+        <div></div>
+    </div>
+
+    <!-- FORM -->
+    <form method="POST">
+
+        <div class="form-grid">
+
+            <div>
+                <label>Vehicle Number:</label>
+                <input type="text" name="vehicle" required>
+            </div>
+
+            <div>
+                <label>Material:</label>
+                <input type="text" name="material" required>
+            </div>
+
+            <div>
+                <label>Supplier:</label>
+                <input type="text" name="supplier">
+            </div>
+
+            <div>
+                <label>Driver:</label>
+                <input type="text" name="driver">
+            </div>
+
+            <div>
+                <label>Gross Weight:</label>
+                <input type="number" id="gross" name="gross" required>
+            </div>
+
+            <div>
+                <label>Tare Weight:</label>
+                <input type="number" id="tare" name="tare" required>
+            </div>
+
+            <div>
+                <label>Net Weight (Auto):</label>
+                <input type="number" id="net" readonly>
+            </div>
+
+            <div>
+                <label>Date & Time (Auto):</label>
+                <input type="text" id="datetime" readonly>
+            </div>
+
+        </div>
+
+        <div class="form-submit no-print">
+            <button type="submit">Generate Slip</button>
+        </div>
+
+    </form>
+
+    <br>
+
+    <div class="no-print">
+        <a href="{{ url_for('weighbridge.records') }}">View Records</a> |
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
+    </div>
+
+</div>
+
+<script>
+
+// safer net calculation
+function calculateNet() {
+    let gross = Number(document.getElementById("gross").value) || 0;
+    let tare = Number(document.getElementById("tare").value) || 0;
+    document.getElementById("net").value = gross - tare;
+}
+
+document.getElementById("gross").addEventListener("input", calculateNet);
+document.getElementById("tare").addEventListener("input", calculateNet);
+
+// stable datetime updater
+function updateTime() {
+    let now = new Date();
+    document.getElementById("datetime").value = now.toLocaleString();
+}
+updateTime();
+setInterval(updateTime, 1000);
+
+</script>
+
+</body>
+</html>
