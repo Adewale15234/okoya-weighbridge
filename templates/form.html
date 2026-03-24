@@ -152,7 +152,7 @@ button:hover {
     </div>
 
     <!-- FORM -->
-    <form method="POST" action="{{ url_for('weighbridge.form') }}">
+    <form method="POST" action="{{ url_for('weighbridge_bp.form') }}">
 
         <div class="form-grid">
 
@@ -207,7 +207,7 @@ button:hover {
     <br>
 
     <div class="no-print">
-        <a href="{{ url_for('weighbridge.records') }}">View Records</a> |
+        <a href="{{ url_for('weighbridge_bp.records') }}">View Records</a> |
         <a href="{{ url_for('auth.logout') }}">Logout</a>
     </div>
 

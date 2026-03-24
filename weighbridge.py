@@ -148,7 +148,7 @@ def edit_record(record_id):
 
         db.session.commit()
         flash('Record updated successfully!', 'success')
-        return redirect(url_for('weighbridge.records'))
+        return redirect(url_for('weighbridge_bp.records'))
 
     return render_template('edit_record.html', record=record)
 
