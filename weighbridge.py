@@ -53,19 +53,19 @@ def dashboard():
         avg_net=avg_net
     )
 
-
 # ================= FORM =================
 @weighbridge_bp.route("/form", methods=["GET", "POST"])
 @login_required
 def form():
 
     if request.method == "POST":
-       try:
+        try:
             gross = float(request.form.get("gross", 0))
             tare = float(request.form.get("tare", 0))
         except:
             gross = 0
             tare = 0
+
         net = gross - tare
 
         new_record = Record(
@@ -86,6 +86,7 @@ def form():
 
     return render_template("form.html")
 
+    
 
 # ================= SLIP =================
 @weighbridge_bp.route("/slip/<int:record_id>")
