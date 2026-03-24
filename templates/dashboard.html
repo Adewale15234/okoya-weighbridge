@@ -3,6 +3,13 @@
 <head>
     <title>Industrial Weighbridge Dashboard</title>
 
+    <!-- ================= FAVICON FIX ================= -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <!-- If you are using PNG instead, use this instead:
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    -->
+
     <style>
         body {
             font-family: Arial;
@@ -102,6 +109,7 @@
 
 <div class="header">
 
+    <!-- LOGO (NOT FAVICON) -->
     <img src="{{ url_for('static', filename='android-chrome-512x512.png') }}">
 
     <div>🏭 OKOYA INDUSTRIAL WEIGHBRIDGE SYSTEM</div>
@@ -148,7 +156,6 @@
 
 <div class="buttons">
 
-    <!-- FIXED LINKS -->
     <a class="btn" href="{{ url_for('weighbridge.form') }}">➕ New Entry</a>
     <a class="btn" href="{{ url_for('weighbridge.records') }}">📄 Records</a>
     <a class="btn" href="{{ url_for('weighbridge.export_excel') }}">⬇ Export Excel</a>
