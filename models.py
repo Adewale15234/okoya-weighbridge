@@ -8,17 +8,19 @@ class Record(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
+    # BASIC INFO
     vehicle = db.Column(db.String(100), nullable=False)
     material = db.Column(db.String(100), nullable=False)
-    supplier = db.Column(db.String(100))
-    driver = db.Column(db.String(100))
+    supplier = db.Column(db.String(100), nullable=True)
+    driver = db.Column(db.String(100), nullable=True)
 
+    # WEIGHT DATA
     gross = db.Column(db.Float, nullable=False)
     tare = db.Column(db.Float, nullable=False)
     net = db.Column(db.Float, nullable=False)
 
-    # AUTO timestamp (better than manual string)
-    date_time = db.Column(db.DateTime, default=datetime.utcnow)
+    # AUTO TIMESTAMP (CORRECT)
+    date_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     def __repr__(self):
         return f"<Record {self.id} - {self.vehicle}>"

@@ -69,14 +69,14 @@ def form():
         net = gross - tare
 
         new_record = Record(
-            vehicle=request.form["vehicle"],
-            material=request.form["material"],
-            supplier=request.form["supplier"],
-            driver=request.form["driver"],
+            vehicle=request.form.get("vehicle"),
+            material=request.form.get("material"),
+            supplier=request.form.get("supplier"),  # SAFE
+            driver=request.form.get("driver"),      # SAFE
             gross=gross,
             tare=tare,
-            net=net,
-            date_time=datetime.now()
+            net=net
+            # REMOVE date_time (auto handled by model)
         )
 
         db.session.add(new_record)
@@ -88,13 +88,21 @@ def form():
 
     
 
-# ================= SLIP =================
 @weighbridge_bp.route("/slip/<int:record_id>")
 @login_required
 def slip(record_id):
 
     record = Record.query.get_or_404(record_id)
+
     slip_no = f"OKOYA-{datetime.now().year}-{str(record.id).zfill(3)}"
+
+    # SAFE FALLBACK (PREVENT CRASH)
+    if not hasattr(record, "material"):
+        record.material = ""
+    if not hasattr(record, "supplier"):
+        record.supplier = ""
+    if not hasattr(record, "driver"):
+        record.driver = ""
 
     return render_template("slip.html", record=record, slip_no=slip_no)
 
