@@ -143,7 +143,7 @@ def edit_record(record_id):
 
         record.gross = float(request.form['gross'] or 0)
         record.tare = float(request.form['tare'] or 0)
-        record.net = float(request.form['net'] or 0)
+        record.net = record.gross - record.tare
 
         # SAFE DATE PARSING (prevents crash on bad input)
         try:
