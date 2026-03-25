@@ -125,7 +125,7 @@ def delete_record(record_id):
     db.session.delete(record)
     db.session.commit()
 
-    return redirect(url_for("weighbridge.records"))
+    return redirect(url_for("weighbridge_bp.records"))
 
 
 # ================= EDIT =================
