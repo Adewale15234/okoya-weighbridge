@@ -19,8 +19,15 @@ class Record(db.Model):
     tare = db.Column(db.Float, nullable=False)
     net = db.Column(db.Float, nullable=False)
 
-    # AUTO TIMESTAMP (CORRECT)
-    date_time = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    # ✅ NEW: CREATED TIME (original time)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+    # ✅ NEW: UPDATED TIME (changes on edit)
+    updated_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
 
     def __repr__(self):
         return f"<Record {self.id} - {self.vehicle}>"

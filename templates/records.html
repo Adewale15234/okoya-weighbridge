@@ -122,7 +122,7 @@ placeholder="Search by Vehicle, ID, Date...">
     <td>{{ r.gross }}</td>
     <td>{{ r.tare }}</td>
     <td>{{ r.net }}</td>
-    <td class="date">{{ r.date_time.strftime('%d-%m-%Y %H:%M') }}</td>
+    <td class="date">{{ r.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
 
     <td onclick="event.stopPropagation();">
     <form style="display:inline;" action="{{ url_for('weighbridge_bp.delete_record', record_id=r.id) }}" method="POST">
