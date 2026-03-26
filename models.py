@@ -19,26 +19,13 @@ class Record(db.Model):
     tare = db.Column(db.Float, nullable=False)
     net = db.Column(db.Float, nullable=False)
 
-    # ================= TIMESTAMPS =================
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
-
-    # ================= SAFE COLUMN CREATION =================
-    @staticmethod
-    def safe_create_table():
+    # ================= DYNAMIC TIMESTAMP =================
+    @property
+    def timestamp(self):
         """
-        Ensures missing columns exist without dropping table.
+        Returns a dynamic timestamp for display purposes.
         """
-        from sqlalchemy import inspect, Column, DateTime
-        inspector = inspect(db.engine)
-        columns = [c['name'] for c in inspector.get_columns("records")]
-
-        # Add missing columns dynamically
-        with db.engine.connect() as conn:
-            if "created_at" not in columns:
-                conn.execute('ALTER TABLE records ADD COLUMN created_at TIMESTAMP DEFAULT NOW() NOT NULL')
-            if "updated_at" not in columns:
-                conn.execute('ALTER TABLE records ADD COLUMN updated_at TIMESTAMP DEFAULT NOW() NOT NULL')
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # ================= REPRESENTATION =================
     def __repr__(self):

@@ -119,16 +119,22 @@ button:hover {
     <label>Net (Auto Calculated):</label>
     <input id="net" name="net" type="number" step="0.01" value="{{ record.net }}" readonly>
 
-    <!-- ✅ CREATED TIME -->
+    <!-- ✅ DATABASE TIMESTAMP -->
     <div class="time-box">
-        <strong>Created At:</strong><br>
+        <strong>Record Created At:</strong><br>
         {{ record.created_at.strftime('%d-%m-%Y %H:%M:%S') if record.created_at else 'N/A' }}
     </div>
 
-    <!-- ✅ UPDATED TIME -->
+    <!-- ✅ DATABASE UPDATED TIMESTAMP -->
     <div class="time-box">
         <strong>Last Updated:</strong><br>
         {{ record.updated_at.strftime('%d-%m-%Y %H:%M:%S') if record.updated_at else 'Not yet updated' }}
+    </div>
+
+    <!-- ✅ LIVE DYNAMIC TIMESTAMP -->
+    <div class="time-box">
+        <strong>Current Time:</strong><br>
+        <span id="liveTime"></span>
     </div>
 
     <button type="submit">Update Record</button>
@@ -153,7 +159,17 @@ document.getElementById('gross').addEventListener('input', calculateNet);
 document.getElementById('tare').addEventListener('input', calculateNet);
 
 // Run once on page load
-window.onload = calculateNet;
+window.onload = function() {
+    calculateNet();
+    updateLiveTime(); // initialize live time immediately
+}
+
+// ✅ LIVE TIMESTAMP FUNCTION
+function updateLiveTime() {
+    const now = new Date();
+    document.getElementById('liveTime').innerText = now.toLocaleString();
+    setTimeout(updateLiveTime, 1000); // updates every second
+}
 </script>
 
 </body>

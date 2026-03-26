@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, send_file, flash
-from datetime import datetime
 from models import db, Record
 import pandas as pd
 import tempfile
@@ -16,41 +15,26 @@ def login_required(func):
         return func(*args, **kwargs)
     return wrapper
 
-
 # ================= DASHBOARD =================
-from sqlalchemy import text  # <-- add this at top with your imports
-
 @weighbridge_bp.route("/dashboard")
 @login_required
 def dashboard():
     try:
-        # ================= SAFE COLUMN CHECK =================
-        with db.engine.connect() as conn:
-            columns = db.inspect(db.engine).get_columns("records")
-            column_names = [c['name'] for c in columns]
-
-            if "created_at" not in column_names:
-                conn.execute(text("ALTER TABLE records ADD COLUMN created_at TIMESTAMP DEFAULT NOW()"))
-            if "updated_at" not in column_names:
-                conn.execute(text("ALTER TABLE records ADD COLUMN updated_at TIMESTAMP DEFAULT NOW()"))
-
-        # ================= FETCH RECORDS =================
         records = Record.query.all() or []
+
+        # Add a dynamic timestamp for display
+        for r in records:
+            r.display_time = r.timestamp
 
         total_records = len(records)
         total_gross = sum(getattr(r, "gross", 0) or 0 for r in records)
         total_net = sum(getattr(r, "net", 0) or 0 for r in records)
         avg_net = (total_net / total_records) if total_records else 0
 
-        today = datetime.utcnow().date()
-        today_records = [
-            r for r in records
-            if getattr(r, "created_at", None) and isinstance(r.created_at, datetime)
-            and r.created_at.date() == today
-        ]
+        # Since no created_at, consider all records for "today"
+        today_records = records
         today_net = sum(getattr(r, "net", 0) or 0 for r in today_records)
 
-        # ================= RENDER DASHBOARD =================
         return render_template(
             "dashboard.html",
             total_records=total_records,
@@ -58,7 +42,8 @@ def dashboard():
             total_net=total_net,
             today_records=len(today_records),
             today_net=today_net,
-            avg_net=avg_net
+            avg_net=avg_net,
+            records=records  # pass for template if needed
         )
 
     except Exception as e:
@@ -162,6 +147,7 @@ def edit_record(record_id):
 @login_required
 def export_excel():
     records = Record.query.all()
+
     data = [
         {
             "ID": r.id,
@@ -172,8 +158,7 @@ def export_excel():
             "Gross": r.gross,
             "Tare": r.tare,
             "Net": r.net,
-            "Created At": r.created_at.strftime("%Y-%m-%d %H:%M:%S") if r.created_at else "",
-            "Last Updated": r.updated_at.strftime("%Y-%m-%d %H:%M:%S") if r.updated_at else ""
+            "Timestamp": r.timestamp  # dynamic timestamp
         }
         for r in records
     ]
