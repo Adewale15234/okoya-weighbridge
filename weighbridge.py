@@ -18,20 +18,21 @@ def login_required(func):
 
 
 # ================= DASHBOARD =================
+from sqlalchemy import text  # <-- add this at top with your imports
+
 @weighbridge_bp.route("/dashboard")
 @login_required
 def dashboard():
     try:
         # ================= SAFE COLUMN CHECK =================
-        # Make sure created_at and updated_at exist
         with db.engine.connect() as conn:
             columns = db.inspect(db.engine).get_columns("records")
             column_names = [c['name'] for c in columns]
 
             if "created_at" not in column_names:
-                conn.execute("ALTER TABLE records ADD COLUMN created_at TIMESTAMP DEFAULT NOW()")
+                conn.execute(text("ALTER TABLE records ADD COLUMN created_at TIMESTAMP DEFAULT NOW()"))
             if "updated_at" not in column_names:
-                conn.execute("ALTER TABLE records ADD COLUMN updated_at TIMESTAMP DEFAULT NOW()")
+                conn.execute(text("ALTER TABLE records ADD COLUMN updated_at TIMESTAMP DEFAULT NOW()"))
 
         # ================= FETCH RECORDS =================
         records = Record.query.all() or []
