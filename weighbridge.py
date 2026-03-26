@@ -21,31 +21,35 @@ def login_required(func):
 @weighbridge_bp.route("/dashboard")
 @login_required
 def dashboard():
-    records = Record.query.all()
+    try:
+        records = Record.query.all()
 
-    total_records = len(records)
-    total_gross = sum(r.gross or 0 for r in records)
-    total_net = sum(r.net or 0 for r in records)
-    avg_net = (total_net / total_records) if total_records else 0
+        total_records = len(records)
+        total_gross = sum(getattr(r, "gross", 0) or 0 for r in records)
+        total_net = sum(getattr(r, "net", 0) or 0 for r in records)
+        avg_net = (total_net / total_records) if total_records else 0
 
-    today = datetime.utcnow().date()
-    today_records = []
-    for r in records:
-        if r.created_at and isinstance(r.created_at, datetime):
-            if r.created_at.date() == today:
-                today_records.append(r)
-    today_net = sum(r.net or 0 for r in today_records)
+        today = datetime.utcnow().date()
+        today_records = [
+            r for r in records
+            if getattr(r, "created_at", None) and isinstance(r.created_at, datetime)
+            and r.created_at.date() == today
+        ]
+        today_net = sum(getattr(r, "net", 0) or 0 for r in today_records)
 
-    return render_template(
-        "dashboard.html",
-        total_records=total_records,
-        total_gross=total_gross,
-        total_net=total_net,
-        today_records=len(today_records),
-        today_net=today_net,
-        avg_net=avg_net
-    )
-
+        return render_template(
+            "dashboard.html",
+            total_records=total_records,
+            total_gross=total_gross,
+            total_net=total_net,
+            today_records=len(today_records),
+            today_net=today_net,
+            avg_net=avg_net
+        )
+    except Exception as e:
+        # Show error instead of 500
+        return f"<h1>Dashboard Error:</h1><pre>{e}</pre>"
+        
 
 # ================= FORM =================
 @weighbridge_bp.route("/form", methods=["GET", "POST"])

@@ -3,12 +3,12 @@ from flask import Flask
 from models import db
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"
+app.secret_key = "Okoya001"  # <-- secret key for sessions
 
-# DATABASE CONFIG (FIXED)
+# DATABASE CONFIG
 database_url = os.environ.get("DATABASE_URL")
 
-# Fix for Render PostgreSQL (important)
+# Fix for Render PostgreSQL URL format
 if database_url:
     database_url = database_url.replace("postgres://", "postgresql://")
 
@@ -24,7 +24,7 @@ from weighbridge import weighbridge_bp
 app.register_blueprint(auth_bp)
 app.register_blueprint(weighbridge_bp, url_prefix="/weighbridge")
 
-# CREATE DB
+# CREATE DATABASE TABLES
 with app.app_context():
     db.create_all()
 
