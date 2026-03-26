@@ -25,7 +25,7 @@ def dashboard():
 
         # Add a dynamic timestamp for display
         for r in records:
-            r.display_time = r.timestamp
+    r.display_time = r.created_at  # or r.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
         total_records = len(records)
         total_gross = sum(getattr(r, "gross", 0) or 0 for r in records)
@@ -163,9 +163,9 @@ def edit_record(record_id):
 
 
 # ================= VIEW SLIP =================
-@weighbridge_bp.route("/slip/<int:record_id>")
+@weighbridge_bp.route("/view_slip/<int:record_id>")
 @login_required
-def slip(record_id):
+def view_slip(record_id):
     record = Record.query.get_or_404(record_id)
 
     display_time = record.created_at.strftime('%Y-%m-%d %H:%M') if record.created_at else "N/A"
@@ -194,7 +194,7 @@ def export_excel():
             "Gross": r.gross,
             "Tare": r.tare,
             "Net": r.net,
-            "Timestamp": r.timestamp  # dynamic timestamp
+            "Timestamp": r.created_at.strftime("%Y-%m-%d %H:%M:%S") if r.created_at else ""
         }
         for r in records
     ]

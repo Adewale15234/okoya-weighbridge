@@ -23,9 +23,9 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(weighbridge_bp, url_prefix="/weighbridge")
 
 # ================= CREATE TABLES =================
-with app.app_context():
+ #ith app.app_context():
     #db.drop_all()      # ⚠️ RUN ONCE ONLY (WILL DELETE OLD DATA)
-    db.create_all()    # create fresh tables
+    #db.create_all()    # create fresh tables
 
 # ================= RUN =================
 if __name__ == "__main__":
