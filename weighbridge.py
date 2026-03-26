@@ -93,7 +93,15 @@ def slip(record_id):
     record.supplier = getattr(record, "supplier", "")
     record.driver = getattr(record, "driver", "")
 
-    return render_template("slip.html", record=record, slip_no=slip_no)
+    # ✅ Generate a safe timestamp string here and pass to template
+    display_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    return render_template(
+        "slip.html",
+        record=record,
+        slip_no=slip_no,
+        display_time=display_time  # use this in template
+    )
 
 
 # ================= RECORDS =================
