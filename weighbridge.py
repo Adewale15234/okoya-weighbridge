@@ -21,7 +21,6 @@ def login_required(func):
 @weighbridge_bp.route("/dashboard")
 @login_required
 def dashboard():
-
     records = Record.query.all()
 
     total_records = len(records)
@@ -30,17 +29,11 @@ def dashboard():
     avg_net = (total_net / total_records) if total_records else 0
 
     today = datetime.utcnow().date()
-
-    # ✅ Use created_at instead of date_time
     today_records = []
     for r in records:
-        try:
-            if r.created_at and isinstance(r.created_at, datetime):
-                if r.created_at.date() == today:
-                    today_records.append(r)
-        except:
-            pass
-
+        if r.created_at and isinstance(r.created_at, datetime):
+            if r.created_at.date() == today:
+                today_records.append(r)
     today_net = sum(r.net or 0 for r in today_records)
 
     return render_template(
@@ -58,14 +51,12 @@ def dashboard():
 @weighbridge_bp.route("/form", methods=["GET", "POST"])
 @login_required
 def form():
-
     if request.method == "POST":
         try:
             gross = float(request.form.get("gross", 0))
             tare = float(request.form.get("tare", 0))
         except:
-            gross = 0
-            tare = 0
+            gross = tare = 0
 
         net = gross - tare
 
@@ -77,7 +68,6 @@ def form():
             gross=gross,
             tare=tare,
             net=net
-            # created_at auto handled
         )
 
         db.session.add(new_record)
@@ -92,17 +82,13 @@ def form():
 @weighbridge_bp.route("/slip/<int:record_id>")
 @login_required
 def slip(record_id):
-
     record = Record.query.get_or_404(record_id)
-
     slip_no = f"OKOYA-{datetime.utcnow().year}-{str(record.id).zfill(3)}"
 
-    if not hasattr(record, "material"):
-        record.material = ""
-    if not hasattr(record, "supplier"):
-        record.supplier = ""
-    if not hasattr(record, "driver"):
-        record.driver = ""
+    # Fallbacks if any field is missing
+    record.material = getattr(record, "material", "")
+    record.supplier = getattr(record, "supplier", "")
+    record.driver = getattr(record, "driver", "")
 
     return render_template("slip.html", record=record, slip_no=slip_no)
 
@@ -111,7 +97,6 @@ def slip(record_id):
 @weighbridge_bp.route("/records")
 @login_required
 def records():
-
     all_records = Record.query.order_by(Record.id.desc()).all()
     return render_template("records.html", records=all_records)
 
@@ -120,66 +105,62 @@ def records():
 @weighbridge_bp.route("/delete_record/<int:record_id>", methods=["POST"])
 @login_required
 def delete_record(record_id):
-
     record = Record.query.get_or_404(record_id)
     db.session.delete(record)
     db.session.commit()
-
+    flash("Record deleted successfully!", "success")
     return redirect(url_for("weighbridge_bp.records"))
 
 
 # ================= EDIT =================
-@weighbridge_bp.route('/edit/<int:record_id>', methods=['GET', 'POST'])
+@weighbridge_bp.route("/edit/<int:record_id>", methods=["GET", "POST"])
 @login_required
 def edit_record(record_id):
-
     record = Record.query.get_or_404(record_id)
 
-    if request.method == 'POST':
-        record.vehicle = request.form['vehicle']
-        record.material = request.form['material']
-        record.supplier = request.form['supplier']
-        record.driver = request.form['driver']
+    if request.method == "POST":
+        record.vehicle = request.form.get("vehicle", record.vehicle)
+        record.material = request.form.get("material", record.material)
+        record.supplier = request.form.get("supplier", record.supplier)
+        record.driver = request.form.get("driver", record.driver)
 
-        record.gross = float(request.form['gross'] or 0)
-        record.tare = float(request.form['tare'] or 0)
+        try:
+            record.gross = float(request.form.get("gross", 0))
+            record.tare = float(request.form.get("tare", 0))
+        except:
+            record.gross = record.tare = 0
 
-        # ✅ ALWAYS calculate net in backend
         record.net = record.gross - record.tare
 
-        # ❌ DO NOT TOUCH created_at
-        # ✅ updated_at auto handled by model
-
         db.session.commit()
+        flash("Record updated successfully!", "success")
+        return redirect(url_for("weighbridge_bp.records"))
 
-        flash('Record updated successfully!', 'success')
-        return redirect(url_for('weighbridge_bp.records'))
-
-    return render_template('edit_record.html', record=record)
+    return render_template("edit_record.html", record=record)
 
 
 # ================= EXCEL EXPORT =================
 @weighbridge_bp.route("/export_excel")
 @login_required
 def export_excel():
-
     records = Record.query.all()
-
-    data = [{
-        "ID": r.id,
-        "Vehicle": r.vehicle,
-        "Material": r.material,
-        "Supplier": r.supplier,
-        "Driver": r.driver,
-        "Gross": r.gross,
-        "Tare": r.tare,
-        "Net": r.net,
-        "Created At": str(r.created_at),
-        "Last Updated": str(r.updated_at)
-    } for r in records]
+    data = [
+        {
+            "ID": r.id,
+            "Vehicle": r.vehicle,
+            "Material": r.material,
+            "Supplier": r.supplier,
+            "Driver": r.driver,
+            "Gross": r.gross,
+            "Tare": r.tare,
+            "Net": r.net,
+            "Created At": r.created_at.strftime("%Y-%m-%d %H:%M:%S") if r.created_at else "",
+            "Last Updated": r.updated_at.strftime("%Y-%m-%d %H:%M:%S") if r.updated_at else ""
+        }
+        for r in records
+    ]
 
     df = pd.DataFrame(data)
-
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
     df.to_excel(tmp.name, index=False)
 

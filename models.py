@@ -8,26 +8,21 @@ class Record(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    # BASIC INFO
+    # ================= BASIC INFO =================
     vehicle = db.Column(db.String(100), nullable=False)
     material = db.Column(db.String(100), nullable=False)
     supplier = db.Column(db.String(100), nullable=True)
     driver = db.Column(db.String(100), nullable=True)
 
-    # WEIGHT DATA
+    # ================= WEIGHT DATA =================
     gross = db.Column(db.Float, nullable=False)
     tare = db.Column(db.Float, nullable=False)
     net = db.Column(db.Float, nullable=False)
 
-    # ✅ NEW: CREATED TIME (original time)
+    # ================= TIMESTAMPS =================
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
-    # ✅ NEW: UPDATED TIME (changes on edit)
-    updated_at = db.Column(
-        db.DateTime,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow
-    )
-
+    # ================= REPRESENTATION =================
     def __repr__(self):
         return f"<Record {self.id} - {self.vehicle}>"
