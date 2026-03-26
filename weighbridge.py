@@ -162,6 +162,22 @@ def edit_record(record_id):
     return render_template("edit_record.html", record=record)
 
 
+# ================= VIEW SLIP =================
+@weighbridge_bp.route("/slip/<int:record_id>")
+@login_required
+def slip(record_id):
+    record = Record.query.get_or_404(record_id)
+
+    display_time = record.created_at.strftime('%Y-%m-%d %H:%M') if record.created_at else "N/A"
+
+    return render_template(
+        "slip.html",
+        record=record,
+        slip_no=record.id,
+        display_time=display_time
+    )
+
+    
 # ================= EXCEL EXPORT =================
 @weighbridge_bp.route("/export_excel")
 @login_required
