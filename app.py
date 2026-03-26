@@ -9,8 +9,10 @@ app.secret_key = "Okoya001"
 
 # ================= DATABASE CONFIG =================
 database_url = "postgresql://okoya_db_user:pMRHfdfl6k79CoF1epnm1n1t1Ohrf39u@dpg-d725ee95pdvs73d9r9vg-a/okoya_db"
+
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://")
+
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -22,9 +24,8 @@ app.register_blueprint(weighbridge_bp, url_prefix="/weighbridge")
 
 # ================= CREATE TABLES =================
 with app.app_context():
-    # db.drop_all()   # ⚠️ keep commented to avoid data loss
-    db.create_all()    # create tables if not exist
-    # No need for Record.safe_create_table anymore
+    db.drop_all()      # ⚠️ RUN ONCE ONLY (WILL DELETE OLD DATA)
+    db.create_all()    # create fresh tables
 
 # ================= RUN =================
 if __name__ == "__main__":

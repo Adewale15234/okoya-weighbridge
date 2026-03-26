@@ -19,13 +19,8 @@ class Record(db.Model):
     tare = db.Column(db.Float, nullable=False)
     net = db.Column(db.Float, nullable=False)
 
-    # ================= DYNAMIC TIMESTAMP =================
-    @property
-    def timestamp(self):
-        """
-        Returns a dynamic timestamp for display purposes.
-        """
-        return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # ================= REAL TIMESTAMP =================
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # ================= REPRESENTATION =================
     def __repr__(self):

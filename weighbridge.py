@@ -97,7 +97,7 @@ def slip(record_id):
     record.driver = getattr(record, "driver", "")
 
     # ✅ Use the record timestamp if it exists, otherwise current time
-    display_time = getattr(record, "timestamp", None)
+    display_time = record.created_at.strftime("%Y-%m-%d %H:%M:%S") if record.created_at else ""
     if display_time is None:
         display_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     else:
