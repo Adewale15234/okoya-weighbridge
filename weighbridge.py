@@ -3,6 +3,7 @@ from models import db, Record
 import pandas as pd
 import tempfile
 from functools import wraps
+from datetime import datetime   # <-- ADD THIS LINE
 
 weighbridge_bp = Blueprint("weighbridge_bp", __name__)
 
@@ -86,6 +87,8 @@ def form():
 @login_required
 def slip(record_id):
     record = Record.query.get_or_404(record_id)
+
+    # Generate slip number
     slip_no = f"OKOYA-{datetime.utcnow().year}-{str(record.id).zfill(3)}"
 
     # Fallbacks if any field is missing
@@ -93,14 +96,23 @@ def slip(record_id):
     record.supplier = getattr(record, "supplier", "")
     record.driver = getattr(record, "driver", "")
 
-    # ✅ Generate a safe timestamp string here and pass to template
-    display_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # ✅ Use the record timestamp if it exists, otherwise current time
+    display_time = getattr(record, "timestamp", None)
+    if display_time is None:
+        display_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    else:
+        # If timestamp is a datetime object, format it nicely
+        if isinstance(display_time, datetime):
+            display_time = display_time.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            # If stored as string already, keep as is
+            display_time = str(display_time)
 
     return render_template(
         "slip.html",
         record=record,
         slip_no=slip_no,
-        display_time=display_time  # use this in template
+        display_time=display_time  # pass to template
     )
 
 
