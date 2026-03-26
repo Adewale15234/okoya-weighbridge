@@ -22,7 +22,7 @@ def login_required(func):
 @login_required
 def dashboard():
     try:
-        records = Record.query.all()
+        records = Record.query.all() or []
 
         total_records = len(records)
         total_gross = sum(getattr(r, "gross", 0) or 0 for r in records)
@@ -47,9 +47,8 @@ def dashboard():
             avg_net=avg_net
         )
     except Exception as e:
-        # Show error instead of 500
         return f"<h1>Dashboard Error:</h1><pre>{e}</pre>"
-        
+
 
 # ================= FORM =================
 @weighbridge_bp.route("/form", methods=["GET", "POST"])

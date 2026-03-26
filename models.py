@@ -15,14 +15,13 @@ class Record(db.Model):
     driver = db.Column(db.String(100), nullable=True)
 
     # ================= WEIGHT DATA =================
-    gross = db.Column(db.Float, nullable=False)
-    tare = db.Column(db.Float, nullable=False)
-    net = db.Column(db.Float, nullable=False)
+    gross = db.Column(db.Float, nullable=False, default=0)
+    tare = db.Column(db.Float, nullable=False, default=0)
+    net = db.Column(db.Float, nullable=False, default=0)
 
     # ================= TIMESTAMPS =================
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
 
-    # ================= REPRESENTATION =================
     def __repr__(self):
         return f"<Record {self.id} - {self.vehicle}>"
