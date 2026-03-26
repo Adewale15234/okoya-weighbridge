@@ -31,6 +31,7 @@
         .modal-content {
             background: white;
             width: 400px;
+            max-width: 90%;
             margin: 10% auto;
             padding: 20px;
             border-radius: 10px;
@@ -77,12 +78,10 @@
         .top-bar {
             margin: 15px 0;
         }
-
     </style>
 </head>
 
 <body>
-
 <div class="header">
     <h2>All Records</h2>
 </div>
@@ -102,7 +101,6 @@ placeholder="Search by Vehicle, ID, Date...">
 </div>
 
 <table border="1" width="100%" cellspacing="0" cellpadding="8">
-
 <tr>
     <th>ID</th>
     <th>Vehicle</th>
@@ -115,29 +113,23 @@ placeholder="Search by Vehicle, ID, Date...">
 
 {% for r in records %}
 <tr class="clickable-row search-row"
-    onclick="window.location='{{ url_for('weighbridge_bp.slip', record_id=r.id) }}'">
+    onclick="openModal('{{ r.id }}', '{{ r.vehicle }}', '{{ r.gross }}', '{{ r.tare }}', '{{ r.net }}', '{{ r.timestamp.strftime('%Y-%m-%d %H:%M') if r.timestamp else 'N/A' }}')">
 
     <td class="id">{{ r.id }}</td>
     <td class="vehicle">{{ r.vehicle }}</td>
     <td>{{ r.gross }}</td>
     <td>{{ r.tare }}</td>
     <td>{{ r.net }}</td>
-    <td class="date">{{ r.timestamp[:16] }}</td> <!-- shows YYYY-MM-DD HH:MM -->
+    <td class="date">{{ r.timestamp.strftime('%Y-%m-%d %H:%M') if r.timestamp else 'N/A' }}</td>
 
     <td onclick="event.stopPropagation();">
-    <form style="display:inline;" action="{{ url_for('weighbridge_bp.delete_record', record_id=r.id) }}" method="POST">
-        <button class="btn delete-btn"
-                onclick="return confirm('Delete this record?')">
-            Delete
-        </button>
-    </form>
-
-    <a href="{{ url_for('weighbridge_bp.edit_record', record_id=r.id) }}" class="btn" style="background:blue; color:white;">Edit</a>
-</td>
-
+        <form style="display:inline;" action="{{ url_for('weighbridge_bp.delete_record', record_id=r.id) }}" method="POST">
+            <button class="btn delete-btn" onclick="return confirm('Delete this record?')">Delete</button>
+        </form>
+        <a href="{{ url_for('weighbridge_bp.edit_record', record_id=r.id) }}" class="btn" style="background:blue; color:white;">Edit</a>
+    </td>
 </tr>
 {% endfor %}
-
 </table>
 
 <br>
@@ -151,7 +143,6 @@ placeholder="Search by Vehicle, ID, Date...">
         <span class="close" onclick="closeModal()">&times;</span>
 
         <h3>Vehicle Slip</h3>
-
         <p><b>ID:</b> <span id="m_id"></span></p>
         <p><b>Vehicle:</b> <span id="m_vehicle"></span></p>
         <p><b>Gross:</b> <span id="m_gross"></span></p>
@@ -171,7 +162,6 @@ function openModal(id, vehicle, gross, tare, net, date_time) {
     document.getElementById("m_tare").innerText = tare;
     document.getElementById("m_net").innerText = net;
     document.getElementById("m_date").innerText = date_time;
-
     document.getElementById("slipModal").style.display = "block";
 }
 
@@ -208,6 +198,5 @@ document.getElementById("searchInput").addEventListener("keyup", function() {
     document.getElementById("count").innerText = count;
 });
 </script>
-
 </body>
 </html>
