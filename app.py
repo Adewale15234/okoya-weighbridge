@@ -22,9 +22,13 @@ app.register_blueprint(weighbridge_bp, url_prefix="/weighbridge")
 
 # CREATE TABLES SAFELY
 with app.app_context():
-    # ⚠️ Uncomment this only the first time to reset schema
-    # db.drop_all()
-    db.create_all()
+    # db.drop_all()   # ⚠️ leave this commented to avoid data loss
+    db.create_all()    # creates table if it doesn't exist
+    try:
+        from models import Record
+        Record.safe_create_table()  # fix missing columns automatically
+    except Exception as e:
+        print("Error while ensuring safe columns:", e)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
