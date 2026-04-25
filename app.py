@@ -5,12 +5,12 @@ from auth import auth_bp
 from weighbridge import weighbridge_bp
 
 app = Flask(__name__)
-app.secret_key = "Okoya001"
+app.secret_key = os.getenv("SECRET_KEY", "Okoya001")
 
 # ================= DATABASE CONFIG =================
-database_url = "postgresql://okoya_db_user:pMRHfdfl6k79CoF1epnm1n1t1Ohrf39u@dpg-d725ee95pdvs73d9r9vg-a/okoya_db"
+database_url = os.getenv("DATABASE_URL")
 
-if database_url.startswith("postgres://"):
+if database_url and database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
@@ -23,9 +23,8 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(weighbridge_bp, url_prefix="/weighbridge")
 
 # ================= CREATE TABLES =================
- #ith app.app_context():
-    #db.drop_all()      # ⚠️ RUN ONCE ONLY (WILL DELETE OLD DATA)
-    #db.create_all()    # create fresh tables
+with app.app_context():
+    db.create_all()
 
 # ================= RUN =================
 if __name__ == "__main__":
