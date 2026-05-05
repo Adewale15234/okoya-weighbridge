@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Okoya Food Co.</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+
+<div class="login-wrapper">
+
+    <div class="login-card">
+
+        <!-- HEADER -->
+        <div class="login-header">
+
+            <img src="{{ url_for('static', filename='android-chrome-512x512.png') }}" class="login-logo">
+
+            <h1 class="company-name">OKOYA FOOD COMPANY LIMITED</h1>
+
+            <h2 class="company-motto">
+                POVERTY ERADICATION • REDUCE INEQUALITY • LEAVE NO ONE BEHIND
+            </h2>
+
+            <p class="company-address">
+                KM 7 Idi APA Community, Along Ilesha Ibaruba Expressway, Saki, Oyo State, Nigeria
+            </p>
+        </div>
+
+        <!-- TITLE -->
+        <h2 class="login-title">Staff Login Portal</h2>
+        <p class="login-subtitle">Enter your username and password to continue</p>
+
+        {% if error %}
+            <p class="login-error">{{ error }}</p>
+        {% endif %}
+
+        <!-- FORM -->
+        <form method="POST" class="login-form">
+
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter username" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter password" required>
+            </div>
+
+            <button type="submit" class="login-btn">Login</button>
+
+        </form>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            © {{ current_year or 2026 }} OKOYA FOOD COMPANY LIMITED
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

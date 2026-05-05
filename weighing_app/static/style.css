@@ -1,0 +1,182 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7f5;
+    margin: 0;
+    color: #222;
+}
+
+/* =========================
+   HEADER
+========================= */
+.header {
+    background: #0b5d3b;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+.container {
+    width: 90%;
+    max-width: 900px;
+    margin: 30px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+}
+
+/* =========================
+   INPUTS (FIXED & CLEAN)
+========================= */
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    color: #000;
+    font-weight: 500;
+    box-sizing: border-box;
+}
+
+/* INPUT FOCUS */
+input:focus, select:focus, textarea:focus {
+    border-color: #0b5d3b;
+    outline: none;
+    background: #fff;
+}
+
+/* =========================
+   BUTTONS (GLOBAL SYSTEM)
+========================= */
+button, .btn {
+    background: #0b5d3b;
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+button:hover, .btn:hover {
+    background: #084c30;
+}
+
+/* SECONDARY BUTTON (EXPORT, BACK, ETC) */
+.btn-secondary {
+    background: #065f46;
+}
+
+.btn-secondary:hover {
+    background: #10b981;
+    color: black;
+}
+
+/* DANGER BUTTON (DELETE) */
+.btn-danger {
+    background: #dc2626;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+/* =========================
+   SLIP DESIGN
+========================= */
+.slip {
+    border: 2px dashed #0b5d3b;
+    padding: 15px;
+    margin: 20px;
+    background: #fff;
+}
+
+/* =========================
+   TABLE DESIGN (IMPORTANT FIX)
+========================= */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th {
+    background: #0b5d3b;
+    color: white;
+    text-align: left;
+}
+
+td, th {
+    padding: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+td {
+    color: #000;
+}
+
+/* TABLE ROW HOVER */
+tr:hover {
+    background: #f1f5f3;
+}
+
+/* =========================
+   LINKS
+========================= */
+a {
+    color: #0b5d3b;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   LOGIN UI SUPPORT
+========================= */
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #0b1f14;
+}
+
+.login-card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 420px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+/* =========================
+   RESPONSIVE FIX
+========================= */
+@media screen and (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    table {
+        font-size: 12px;
+    }
+
+    button, .btn {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
