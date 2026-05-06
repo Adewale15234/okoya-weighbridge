@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, send_file, flash
-from models import db, Record
+from weighing_app.models import db, Record
 import pandas as pd
 import tempfile
 from functools import wraps

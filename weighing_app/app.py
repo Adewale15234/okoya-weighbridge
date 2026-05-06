@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from models import db, Record
+from weighing_app.models import db, Record
 from auth import auth_bp
 from weighbridge import weighbridge_bp
 
